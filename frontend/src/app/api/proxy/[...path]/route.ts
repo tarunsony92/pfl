@@ -134,67 +134,75 @@ async function handle(
   req: NextRequest,
   { params }: { params: { path: string[] } },
 ): Promise<NextResponse> {
-  const pathSegments = params.path ?? []
-  const joinedPath = pathSegments.join('/')
-  const method = req.method.toUpperCase()
+  try {
+    const pathSegments = params.path ?? []
+    const joinedPath = pathSegments.join('/')
+    const method = req.method.toUpperCase()
 
-  let accessToken = getAccessToken()
-  let extraSetCookies: string[] = []
+    let accessToken = getAccessToken()
+    let extraSetCookies: string[] = []
 
-  // Buffer the request body ONCE up front. NextRequest.body is a ReadableStream
-  // which can only be consumed once; if the first attempt returns 401 and we
-  // retry, we need the same bytes on the replay. Skip the read for GET/HEAD.
-  let bodyBuffer: ArrayBuffer | undefined
-  if (!['GET', 'HEAD'].includes(method)) {
-    try {
-      bodyBuffer = await req.arrayBuffer()
-    } catch {
-      // no body available
-    }
-  }
-
-  // First attempt.
-  let backendResponse = await proxyRequest(req, pathSegments, accessToken, bodyBuffer)
-
-  // Handle 401: attempt refresh (unless we are already on the refresh endpoint).
-  if (backendResponse.status === 401 && joinedPath !== 'auth/refresh') {
-    const cookieHeader = buildCookieHeader(req)
-    const refreshResult = await refreshAccessToken(cookieHeader)
-
-    if (refreshResult) {
-      accessToken = refreshResult.token
-      extraSetCookies = refreshResult.setCookies
-
-      // Replay the original request with the new token + buffered body.
-      backendResponse = await proxyRequest(req, pathSegments, accessToken, bodyBuffer)
-    }
-    // If refresh failed, fall through and return the 401.
-  }
-
-  // Post-process specific auth endpoints to update server-side store.
-  if (backendResponse.ok) {
-    if (method === 'POST' && (joinedPath === 'auth/login' || joinedPath === 'auth/refresh')) {
+    // Buffer the request body ONCE up front. NextRequest.body is a ReadableStream
+    // which can only be consumed once; if the first attempt returns 401 and we
+    // retry, we need the same bytes on the replay. Skip the read for GET/HEAD.
+    let bodyBuffer: ArrayBuffer | undefined
+    if (!['GET', 'HEAD'].includes(method)) {
       try {
-        // Clone before consuming.
-        const cloned = backendResponse.clone()
-        const data = await cloned.json()
-        console.log('[PROXY] LOGIN/REFRESH RESPONSE:', { status: backendResponse.status, data })
-        if (data.access_token) {
-          setAccessToken(data.access_token)
-          console.log('[PROXY] ACCESS TOKEN STORED:', data.access_token.substring(0, 20) + '...')
-        } else {
-          console.error('[PROXY] NO ACCESS_TOKEN IN RESPONSE:', data)
-        }
-      } catch (e) {
-        // JSON parse failure — leave store unchanged.
-        console.error('[PROXY] LOGIN/REFRESH JSON PARSE FAILED:', e)
+        bodyBuffer = await req.arrayBuffer()
+      } catch {
+        // no body available
       }
-    } else if (method === 'POST' && joinedPath === 'auth/logout') {
-      setAccessToken(null)
     }
-  }
 
-  return buildClientResponse(backendResponse, extraSetCookies)
+    // First attempt.
+    let backendResponse = await proxyRequest(req, pathSegments, accessToken, bodyBuffer)
+
+    // Handle 401: attempt refresh (unless we are already on the refresh endpoint).
+    if (backendResponse.status === 401 && joinedPath !== 'auth/refresh') {
+      const cookieHeader = buildCookieHeader(req)
+      const refreshResult = await refreshAccessToken(cookieHeader)
+
+      if (refreshResult) {
+        accessToken = refreshResult.token
+        extraSetCookies = refreshResult.setCookies
+
+        // Replay the original request with the new token + buffered body.
+        backendResponse = await proxyRequest(req, pathSegments, accessToken, bodyBuffer)
+      }
+      // If refresh failed, fall through and return the 401.
+    }
+
+    // Post-process specific auth endpoints to update server-side store.
+    if (backendResponse.ok) {
+      if (method === 'POST' && (joinedPath === 'auth/login' || joinedPath === 'auth/refresh')) {
+        try {
+          // Clone before consuming.
+          const cloned = backendResponse.clone()
+          const data = await cloned.json()
+          console.log('[PROXY] LOGIN/REFRESH RESPONSE:', { status: backendResponse.status, data })
+          if (data.access_token) {
+            setAccessToken(data.access_token)
+            console.log('[PROXY] ACCESS TOKEN STORED:', data.access_token.substring(0, 20) + '...')
+          } else {
+            console.error('[PROXY] NO ACCESS_TOKEN IN RESPONSE:', data)
+          }
+        } catch (e) {
+          // JSON parse failure — leave store unchanged.
+          console.error('[PROXY] LOGIN/REFRESH JSON PARSE FAILED:', e)
+        }
+      } else if (method === 'POST' && joinedPath === 'auth/logout') {
+        setAccessToken(null)
+      }
+    }
+
+    return buildClientResponse(backendResponse, extraSetCookies)
+  } catch (error) {
+    console.error('[PROXY] HANDLER ERROR:', error instanceof Error ? error.message : String(error), error)
+    return NextResponse.json(
+      { detail: `Proxy error: ${error instanceof Error ? error.message : String(error)}` },
+      { status: 500 }
+    )
+  }
 }
 
 // ---------------------------------------------------------------------------
