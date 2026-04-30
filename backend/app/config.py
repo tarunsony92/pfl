@@ -125,6 +125,24 @@ class Settings(BaseSettings):
             )
         return v
 
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def _normalize_database_url(cls, v: object) -> object:
+        """Allow accidental quoted DATABASE_URL values in managed env UIs.
+
+        Render/Vercel env editors sometimes receive values copied with
+        surrounding quotes (e.g. `"postgresql+asyncpg://..."`). SQLAlchemy
+        treats that as a malformed URL, which then surfaces as runtime 500s.
+        """
+        if isinstance(v, str):
+            cleaned = v.strip()
+            if (cleaned.startswith('"') and cleaned.endswith('"')) or (
+                cleaned.startswith("'") and cleaned.endswith("'")
+            ):
+                cleaned = cleaned[1:-1].strip()
+            return cleaned
+        return v
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
