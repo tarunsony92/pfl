@@ -31,31 +31,30 @@ def _client_info(request: Request) -> tuple[str | None, str | None]:
 
 
 def _set_session_cookies(response: Response, refresh_token: str, *, settings: Settings) -> str:
-    """Write refresh_token (HttpOnly) and csrf_token (JS-readable) cookies.
-
-    Returns the generated csrf_token value.
-    """
     csrf_token = secrets.token_urlsafe(32)
+
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=settings.cookie_secure,
-        samesite="lax",
+        secure=True,              # 🔥 force True in prod
+        samesite="none",          # 🔥 FIXED
         path="/",
         max_age=settings.refresh_cookie_max_age_seconds,
         domain=settings.cookie_domain,
     )
+
     response.set_cookie(
         key="csrf_token",
         value=csrf_token,
-        httponly=False,  # JS must be able to read this
-        secure=settings.cookie_secure,
-        samesite="lax",
+        httponly=False,
+        secure=True,              # 🔥 FIXED
+        samesite="none",          # 🔥 FIXED
         path="/",
         max_age=settings.csrf_cookie_max_age_seconds,
         domain=settings.cookie_domain,
     )
+
     return csrf_token
 
 

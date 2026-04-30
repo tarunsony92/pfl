@@ -178,11 +178,23 @@ async function handle(
         // Clone before consuming.
         const cloned = backendResponse.clone()
         const data = await cloned.json()
-        if (data.access_token) {
+
+
+        // #edit by tarun ----
+        console.log("LOGIN RESPONSE:", data)
+
+        if (!data?.access_token) {
+          console.error("Login failed:", data)
+        } 
+        else {
           setAccessToken(data.access_token)
         }
       } catch {
         // JSON parse failure — leave store unchanged.
+        console.error("JSON parse error:", e)
+
+
+        // edit by tarun  ----
       }
     } else if (method === 'POST' && joinedPath === 'auth/logout') {
       setAccessToken(null)

@@ -57,7 +57,10 @@ def create_app() -> FastAPI:
     app = FastAPI(title="PFL Credit AI", version="0.2.0", lifespan=_lifespan)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.cors_origins_list,
+        allow_origins=[
+            "http://localhost:3000",
+            "https://pfl-eight.vercel.app",
+        ],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
