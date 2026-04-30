@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Missing Documents - Case {{ loan_id }}</title></head>
+<body>
+<p>Dear Team,</p>
+<p>The case for applicant <strong>{{ applicant_name }}</strong> (Loan ID: {{ loan_id }}, Case ID: {{ case_id }}) is missing the following documents:</p>
+<ul>
+  {% for doc in missing_docs_list %}
+  <li><strong>{{ doc.doc_type }}</strong> — {{ doc.reason }}</li>
+  {% endfor %}
+</ul>
+<p>Please upload the missing items via the case dashboard:</p>
+<p><a href="{{ link_to_case_url }}">Open case</a></p>
+<p>Once uploaded, validation will re-run automatically.</p>
+<p>— PFL Credit System</p>
+</body>
+</html>

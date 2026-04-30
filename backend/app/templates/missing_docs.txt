@@ -1,0 +1,15 @@
+Dear Team,
+
+The case for applicant {{ applicant_name }} (Loan ID: {{ loan_id }},
+Case ID: {{ case_id }}) is missing the following documents:
+
+{% for doc in missing_docs_list -%}
+- {{ doc.doc_type }}: {{ doc.reason }}
+{% endfor %}
+
+Please upload the missing items via the case dashboard:
+{{ link_to_case_url }}
+
+Once uploaded, validation will re-run automatically.
+
+— PFL Credit System

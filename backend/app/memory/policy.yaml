@@ -1,0 +1,40 @@
+# PFL Finance — Phase 1 Credit Policy (M5 stub, static)
+# Managed by: Credit Head. Edit via M7 heuristic distillation.
+version: "1.0"
+
+hard_rules:
+  cibil_min: 700
+  coapplicant_cibil_min: 700
+  max_total_indebtedness_inr: 500000
+  applicant_age_min: 21
+  applicant_age_max: 60
+  coapplicant_age_min: 21
+  coapplicant_age_max: 65
+  max_business_distance_km: 25
+  foir_cap_pct: 50
+  idir_cap_pct: 50
+  bank_declared_variance_pct_max: 15
+  stock_to_loan_ratio_min: 1.0
+  address_match_min: 4
+  bounce_count_escalate: 3
+  negative_statuses:
+    - WRITTEN_OFF
+    - SUIT_FILED
+    - LSS
+
+ticket_grid:
+  - {amount: 50000, tenures: [12, 18]}
+  - {amount: 60000, tenures: [12, 18]}
+  - {amount: 75000, tenures: [12, 18, 24]}
+  - {amount: 100000, tenures: [18, 24, 30]}
+  - {amount: 125000, tenures: [18, 24, 30]}
+  - {amount: 150000, tenures: [24, 30, 36]}
+
+foir_cap: 0.50
+foir_warn: 0.40
+
+loan_grid:
+  min_inr: 50000
+  max_inr: 300000
+  ticket_sizes_inr: [50000, 75000, 100000, 150000, 200000, 300000]
+  tenures_months: [12, 18, 24, 36]

@@ -1,0 +1,81 @@
+[tool.poetry]
+name = "pfl-backend"
+version = "0.1.0"
+description = "PFL Finance Credit AI backend"
+authors = ["Saksham Gupta"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
+pydantic = "^2.9.0"
+pydantic-settings = "^2.6.0"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.35"}
+asyncpg = "^0.30.0"
+alembic = "^1.13.0"
+bcrypt = "^4.2.0"
+pyjwt = "^2.9.0"
+pyotp = "^2.9.0"
+qrcode = {extras = ["pil"], version = "^7.4.2"}
+python-multipart = "^0.0.12"
+httpx = "^0.27.0"
+typer = "^0.12.0"
+greenlet = "^3.4.0"
+email-validator = "^2.3.0"
+aioboto3 = "^15.5.0"
+pdfplumber = "^0.11.9"
+beautifulsoup4 = "^4.14.3"
+lxml = "^6.1.0"
+rapidfuzz = "^3.14.5"
+jinja2 = "^3.1.6"
+openpyxl = "^3.1.5"
+python-docx = "^1.2.0"
+anthropic = "^0.96.0"
+pgvector = "^0.4.2"
+reportlab = "^4.4.10"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+pytest-asyncio = "^0.24.0"
+pytest-cov = "^5.0.0"
+factory-boy = "^3.3.0"
+ruff = "^0.7.0"
+mypy = "^1.13.0"
+moto = "^5.1.22"
+types-pyyaml = "^6.0.12.20260408"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+addopts = "-v --strict-markers --cov=app --cov-report=term-missing"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+# B008: FastAPI requires Depends() in function defaults — idiomatic, not a real anti-pattern here.
+# N818: Exception class names are intentionally concise domain terms (InvalidCredentials, etc.);
+#       renaming to *Error suffix would break public API and readability.
+ignore = ["B008", "N818"]
+
+[tool.ruff.lint.per-file-ignores]
+# E402: test_security.py has class-scoped imports below class definitions (test isolation).
+"tests/unit/test_security.py" = ["E402"]
+# N806: conftest uses `Session` as a class alias variable — acceptable.
+"tests/conftest.py" = ["N806"]
+
+[tool.coverage.run]
+concurrency = ["greenlet", "thread"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true

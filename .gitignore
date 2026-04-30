@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.py,cover
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage*
+htmlcov/
+.venv/
+venv/
+# Env
+.env
+.env.local
+.env.*.local
+# IDE
+.vscode/
+.idea/
+# Claude Code local config (per-user, do not share)
+.claude/
+# OS
+.DS_Store
+Thumbs.db
+# Node (for later)
+node_modules/
+.next/
+dist/
+build/
+# Docker
+*.pid
