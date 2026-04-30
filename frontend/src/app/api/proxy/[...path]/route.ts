@@ -20,7 +20,7 @@ import {
   refreshAccessToken,
 } from '@/lib/server-auth'
 
-const BACKEND_URL = process.env.BACKEND_INTERNAL_URL || 'http://backend:8000'
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 // Headers we must not forward to the backend.
 const HOP_BY_HOP = new Set([
