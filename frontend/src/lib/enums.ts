@@ -3,7 +3,7 @@
 //
 // Generated at: 2026-04-25T12:39:46.240Z
 
-export const UserRoles = ['admin', 'ceo', 'credit_ho', 'ai_analyser', 'underwriter'] as const
+export const UserRoles = ['user', 'admin', 'ceo', 'credit_ho', 'ai_analyser', 'underwriter'] as const
 export type UserRole = (typeof UserRoles)[number]
 
 export const CaseStages = ['UPLOADED', 'CHECKLIST_VALIDATION', 'CHECKLIST_MISSING_DOCS', 'CHECKLIST_VALIDATED', 'INGESTED', 'PHASE_1_DECISIONING', 'PHASE_1_REJECTED', 'PHASE_1_COMPLETE', 'PHASE_2_AUDITING', 'PHASE_2_COMPLETE', 'HUMAN_REVIEW', 'APPROVED', 'REJECTED', 'ESCALATED_TO_CEO'] as const

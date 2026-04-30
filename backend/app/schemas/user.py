@@ -37,7 +37,7 @@ class UserActiveUpdate(BaseModel):
 
 
 class UserRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
     email: EmailStr

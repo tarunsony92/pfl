@@ -2,6 +2,7 @@ import { cn } from '@/lib/cn'
 import type { UserRole } from '@/lib/enums'
 
 const roleColors: Record<UserRole, string> = {
+  user: 'bg-pfl-slate-100 text-pfl-slate-700',
   admin: 'bg-red-100 text-red-700',
   ceo: 'bg-purple-100 text-purple-700',
   credit_ho: 'bg-blue-100 text-blue-700',
@@ -10,6 +11,7 @@ const roleColors: Record<UserRole, string> = {
 }
 
 const roleLabels: Record<UserRole, string> = {
+  user: 'User',
   admin: 'Admin',
   ceo: 'CEO',
   credit_ho: 'Credit HO',

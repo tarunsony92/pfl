@@ -23,8 +23,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    refreshUser()
-  }, [refreshUser])
+    const initAuth = async () => {
+      // Try to get current user first
+      await refreshUser()
+      
+      // In development, auto-login if not already authenticated
+      if (typeof window !== 'undefined' && !user) {
+        const isDev = process.env.NODE_ENV === 'development'
+        if (isDev) {
+          try {
+            await api.auth.login('admin@pfl.com', 'Pass123!')
+            await refreshUser()
+          } catch {
+            // Auto-login failed; user will see login page
+            setLoading(false)
+          }
+        }
+      }
+    }
+    
+    initAuth()
+  }, [refreshUser, user])
 
   const login = useCallback(
     async (email: string, password: string, mfaCode?: string) => {

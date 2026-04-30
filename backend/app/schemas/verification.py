@@ -20,7 +20,7 @@ from app.enums import (
 
 
 class L1ExtractedDocumentRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
     case_id: UUID
@@ -40,7 +40,7 @@ class L1ExtractedDocumentRead(BaseModel):
 
 
 class LevelIssueRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
     verification_result_id: UUID
@@ -61,7 +61,7 @@ class LevelIssueRead(BaseModel):
 
 
 class VerificationResultRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
     case_id: UUID

@@ -15,7 +15,7 @@ from app.enums import DecisionOutcome, DecisionStatus, StepStatus
 class DecisionStepRead(BaseModel):
     """Read schema for a single DecisionStep row."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
     decision_result_id: UUID
@@ -43,7 +43,7 @@ class DecisionStepRead(BaseModel):
 class DecisionResultRead(BaseModel):
     """Read schema for a DecisionResult row."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
     case_id: UUID

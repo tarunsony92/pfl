@@ -4,6 +4,7 @@ from enum import StrEnum
 class UserRole(StrEnum):
     """Roles per spec §3.1."""
 
+    USER = "user"
     ADMIN = "admin"
     CEO = "ceo"
     CREDIT_HO = "credit_ho"

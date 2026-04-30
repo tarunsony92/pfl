@@ -34,6 +34,9 @@ class TestArtifactType:
 class TestUserRole:
     """Sanity — unchanged from M1."""
 
+    def test_user_exists(self):
+        assert UserRole.USER == "user"
+
     def test_admin_exists(self):
         assert UserRole.ADMIN == "admin"
 

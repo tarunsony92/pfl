@@ -15,7 +15,7 @@ class FeedbackCreate(BaseModel):
 
 
 class FeedbackRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
     case_id: UUID
