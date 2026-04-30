@@ -178,11 +178,16 @@ async function handle(
         // Clone before consuming.
         const cloned = backendResponse.clone()
         const data = await cloned.json()
+        console.log('[PROXY] LOGIN/REFRESH RESPONSE:', { status: backendResponse.status, data })
         if (data.access_token) {
           setAccessToken(data.access_token)
+          console.log('[PROXY] ACCESS TOKEN STORED:', data.access_token.substring(0, 20) + '...')
+        } else {
+          console.error('[PROXY] NO ACCESS_TOKEN IN RESPONSE:', data)
         }
-      } catch {
+      } catch (e) {
         // JSON parse failure — leave store unchanged.
+        console.error('[PROXY] LOGIN/REFRESH JSON PARSE FAILED:', e)
       }
     } else if (method === 'POST' && joinedPath === 'auth/logout') {
       setAccessToken(null)
